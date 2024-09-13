@@ -1,0 +1,33 @@
+[project]
+name = "larry4mac"
+dynamic = ["version"]
+description = "Larry extensions for Mac"
+authors = [
+    {name = "Albert Hopkins", email = "marduk@letterboxes.org"},
+]
+dependencies = [
+    "larry @ git+https://github.com/enku/larry.git",
+]
+requires-python = ">=3.12"
+readme = "README.md"
+license = {text = "MIT"}
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+
+[project.entry-points."larry.plugins"]
+"larry4mac.wallpaper" = "larry4mac.wallpaper:plugin"
+
+[tool.pdm]
+distribution = true
+version = { source = "scm" }
+
+[tool.pdm.dev-dependencies]
+dev = [
+    "pylint>=3.2.7",
+    "mypy>=1.11.2",
+    "black>=24.8.0",
+    "isort>=5.13.2",
+]
