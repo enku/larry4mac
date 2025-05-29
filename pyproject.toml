@@ -20,14 +20,20 @@ build-backend = "pdm.backend"
 [project.entry-points."larry.plugins"]
 "larry4mac.wallpaper" = "larry4mac.wallpaper:plugin"
 
+[tool.coverage.run]
+source = ["larry4mac"]
+omit = []
+
 [tool.pdm]
 distribution = true
 version = { source = "scm" }
 
-[tool.pdm.dev-dependencies]
+
+[dependency-groups]
 dev = [
     "pylint>=3.2.7",
     "mypy>=1.11.2",
     "black>=24.8.0",
     "isort>=5.13.2",
+    "coverage>=7.8.2",
 ]
