@@ -7,13 +7,14 @@ import tempfile
 
 import larry
 import larry.config
+from larry.color import ColorList
 
 LOGGER = larry.LOGGER.getChild("larry4mac.wallpaper")
 
 HELP = "Set the wallpaper on MacOS"
 
 
-def plugin(_colors: larry.ColorList, config: larry.config.ConfigType) -> None:
+def plugin(_colors: ColorList, config: larry.config.ConfigType) -> None:
     """Set the wallpaper on MacOS"""
     infile = pathlib.Path(config["input"]).expanduser()
 
