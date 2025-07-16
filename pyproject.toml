@@ -21,7 +21,7 @@ build-backend = "pdm.backend"
 "larry4mac.wallpaper" = "larry4mac.wallpaper:plugin"
 
 [tool.coverage.run]
-source = ["larry4mac"]
+source = ["larry4mac", "tests"]
 omit = []
 
 [tool.pdm]
