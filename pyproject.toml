@@ -12,6 +12,10 @@ requires-python = ">=3.12"
 readme = "README.md"
 license = {text = "MIT"}
 
+[project.urls]
+homepage = "https://github.com/enku/larry4mac"
+repository = "https://github.com/enku/larry4mac"
+
 [build-system]
 requires = ["pdm-backend"]
 build-backend = "pdm.backend"
