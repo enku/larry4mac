@@ -21,8 +21,9 @@ plugins =
 input = ~/Pictures/larry
 ```
 
-> Note: The `input` for larry4mac.wallpaper (normally) should be the `output`
-> for larry.
+> [!NOTE]
+> The `input` for larry4mac.wallpaper (normally) should be the `output` for
+> larry.
 
 > Note: The default location for the config file on MacOS is
 > `~/Library/Application Support/larry.cfg`.
