@@ -39,6 +39,11 @@ tell application "System Events"
 end tell
 """
     LOGGER.debug("Setting wallpaper to %s", src)
+    applescript(script)
+
+
+def applescript(script: str) -> None:
+    """Run the given applescript"""
     with subprocess.Popen(["/usr/bin/osascript"], stdin=subprocess.PIPE) as sp:
         assert sp.stdin
         sp.stdin.write(script.encode("utf8"))
