@@ -7,6 +7,7 @@ import tempfile
 
 import larry
 import larry.config
+from larry import pool
 from larry.color import ColorList
 
 LOGGER = larry.LOGGER.getChild("larry4mac.wallpaper")
@@ -14,19 +15,19 @@ LOGGER = larry.LOGGER.getChild("larry4mac.wallpaper")
 HELP = "Set the wallpaper on MacOS"
 
 
-def plugin(_colors: ColorList, config: larry.config.ConfigType) -> None:
+async def plugin(_colors: ColorList, config: larry.config.ConfigType) -> None:
     """Set the wallpaper on MacOS"""
     infile = pathlib.Path(config["input"]).expanduser()
 
-    with tempfile.TemporaryDirectory() as tmpdir:
+    with await pool.run(tempfile.TemporaryDirectory) as tmpdir:
         link = pathlib.Path(tmpdir) / f"larry4mac.{infile.suffix or 'png'}"
         LOGGER.debug("Linking from %s to %s", link, infile)
-        link.symlink_to(infile)
-        set_wallpaper(link)
-        set_wallpaper(infile)
+        await pool.run(link.symlink_to, infile)
+        await set_wallpaper(link)
+        await set_wallpaper(infile)
 
 
-def set_wallpaper(src: str | os.PathLike) -> None:
+async def set_wallpaper(src: str | os.PathLike) -> None:
     """Set the set the wallpaper given the path
 
     Uses some wicked AppleScript
@@ -39,7 +40,7 @@ tell application "System Events"
 end tell
 """
     LOGGER.debug("Setting wallpaper to %s", src)
-    applescript(script)
+    await pool.run(applescript, script)
 
 
 def applescript(script: str) -> None:
