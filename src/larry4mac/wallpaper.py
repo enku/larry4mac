@@ -10,9 +10,9 @@ import larry.config
 from larry import pool
 from larry.color import ColorList
 
-LOGGER = larry.LOGGER.getChild("larry4mac.wallpaper")
-
+APPLESCRIPT = "/usr/bin/osascript"
 HELP = "Set the wallpaper on MacOS"
+LOGGER = larry.LOGGER.getChild("larry4mac.wallpaper")
 
 
 async def plugin(_colors: ColorList, config: larry.config.ConfigType) -> None:
@@ -45,7 +45,7 @@ end tell
 
 def applescript(script: str) -> None:
     """Run the given applescript"""
-    with subprocess.Popen(["/usr/bin/osascript"], stdin=subprocess.PIPE) as sp:
+    with subprocess.Popen([APPLESCRIPT], stdin=subprocess.PIPE) as sp:
         assert sp.stdin
         sp.stdin.write(script.encode("utf8"))
         sp.stdin.close()
