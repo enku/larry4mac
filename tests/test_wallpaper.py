@@ -31,7 +31,7 @@ class SetWallpaperTests(IsolatedAsyncioTestCase):
         path = "/dev/null"
         await wallpaper.set_wallpaper(path)
 
-        popen_cls.assert_called_once_with(["/usr/bin/osascript"], stdin=sp.PIPE)
+        popen_cls.assert_called_once_with([wallpaper.APPLESCRIPT], stdin=sp.PIPE)
         popen = popen_cls.return_value
         context = popen.__enter__.return_value
         stdin = context.stdin
