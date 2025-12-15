@@ -2,7 +2,9 @@
 
 import os
 import pathlib
+import shutil
 import subprocess
+import sys
 import tempfile
 
 import larry
@@ -18,13 +20,28 @@ LOGGER = larry.LOGGER.getChild("larry4mac.wallpaper")
 async def plugin(_colors: ColorList, config: larry.config.ConfigType) -> None:
     """Set the wallpaper on MacOS"""
     infile = pathlib.Path(config["input"]).expanduser()
+    output = pathlib.Path(config.get("output", fallback=".")).expanduser()
 
-    with await pool.run(tempfile.TemporaryDirectory) as tmpdir:
-        link = pathlib.Path(tmpdir) / f"larry4mac.{infile.suffix or 'png'}"
-        LOGGER.debug("Linking from %s to %s", link, infile)
-        await pool.run(link.symlink_to, infile)
-        await set_wallpaper(link)
-        await set_wallpaper(infile)
+    if not ensure_path_is_dir(output):
+        return
+
+    fd, output_path = tempfile.mkstemp(
+        suffix=f".{infile.suffix or 'png'}", prefix="larry4mac-", dir=str(output)
+    )
+    os.close(fd)
+    await pool.run(shutil.copyfile, infile, output_path)
+    await set_wallpaper(output_path)
+    await purge_old_wallappers(output, output_path)
+
+
+def ensure_path_is_dir(path: pathlib.Path) -> bool:
+    """Return True iff output_dir is a directory"""
+    if not path.is_dir():
+        errmsg = f"larry4mac.wallpaper: {path} does not exist or is not a directory."
+        print(errmsg, file=sys.stderr)
+        return False
+
+    return True
 
 
 async def set_wallpaper(src: str | os.PathLike) -> None:
@@ -49,3 +66,13 @@ def applescript(script: str) -> None:
         assert sp.stdin
         sp.stdin.write(script.encode("utf8"))
         sp.stdin.close()
+
+
+async def purge_old_wallappers(directory: pathlib.Path, current: str) -> None:
+    """Given the directory and current wallpaper, purge other wallappers
+
+    Remove other files in the directory with the pattern "larry4mac-*".
+    """
+    for path in directory.glob("larry4mac-*"):
+        if str(path) != current and path.is_file():
+            path.unlink()
