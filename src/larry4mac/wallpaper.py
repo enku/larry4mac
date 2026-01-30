@@ -15,6 +15,13 @@ from larry.color import ColorList
 APPLESCRIPT = "/usr/bin/osascript"
 HELP = "Set the wallpaper on MacOS"
 LOGGER = larry.LOGGER.getChild("larry4mac.wallpaper")
+WALLPAPER_SCRIPT = """\
+tell application "System Events"
+    tell every desktop
+        set picture to "{src}"
+    end tell
+end tell
+"""
 
 
 async def plugin(_colors: ColorList, config: larry.config.ConfigType) -> None:
@@ -49,15 +56,8 @@ async def set_wallpaper(src: str | os.PathLike) -> None:
 
     Uses some wicked AppleScript
     """
-    script = f"""\
-tell application "System Events"
-    tell every desktop
-        set picture to "{src}"
-    end tell
-end tell
-"""
     LOGGER.debug("Setting wallpaper to %s", src)
-    await pool.run(applescript, script)
+    await pool.run(applescript, WALLPAPER_SCRIPT.format(src=src))
 
 
 def applescript(script: str) -> None:
